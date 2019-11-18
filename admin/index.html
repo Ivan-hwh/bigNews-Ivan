@@ -94,6 +94,14 @@
             $(".user_center_link>img").attr("src", res.data.userPic);
           }
         });
+
+        // 1.给退出按钮注册点击事件
+        $(".logout").click(function() {
+          // 2.删除token值
+          localStorage.removeItem("token");
+          // 3.跳转回登录页面
+          location.href = "./login.html";
+        });
       });
     </script>
   </body>
