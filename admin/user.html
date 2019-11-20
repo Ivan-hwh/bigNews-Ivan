@@ -166,17 +166,19 @@
 
 
                         // 在子页面获取到父页面元素
-                        $.ajax({
+                        $.ajax({           
                             type: "get",
                             url: window.BigNew.user_info,
                             success: function(res) {
+                                // console.log(res)
                                 parent.$(".user_info>img").attr("src", res.data.userPic);
                                 parent.$(".user_info>span").html("欢迎&nbsp;&nbsp;" + res.data.nickname);
                                 parent.$(".user_center_link>img").attr("src", res.data.userPic);
+                                window.location.reload();
                             }
                             });
                         // 刷新子页面
-                        window.location.reload();
+                     
                     }
                 }
             })
