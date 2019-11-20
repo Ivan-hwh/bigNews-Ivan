@@ -64,6 +64,7 @@
       <div class="modal-body">
           
         <form>
+            <!-- 隐藏域 存放id -->
           <input type="hidden" name="" id='categoryId'>
           <div class="form-group">
             <label for="recipient-name" class="control-label">文章分类名称:</label>
@@ -121,6 +122,8 @@
             $('#myModal').on('show.bs.modal', function (e) {
                 // console.log(e.relatedTarget);
                 if(e.relatedTarget == $('#xinzengfenlei')[0]) {
+                    // 清空表单值
+                    $('.modal-body form')[0].reset();
                     $('#exampleModalLabel').text('新增文章分类');
                     $('#btn-confirm').text('新增').addClass('btn-success').removeClass('btn-primary');
                 }
@@ -149,6 +152,8 @@
             // 点击确认按钮进行编辑/新增
             $('#btn-confirm').click(function(){
                 if($(this).hasClass('btn-success')){
+                    
+
                     // 新增按钮
                     var name = $('#recipient-name').val();
                     var slug = $('#message-text').val();
@@ -187,6 +192,10 @@
                 }
             })
 
+            // 取消按钮点击事件触发清空表单数据功能
+            $('#btn-cancel').click(function(){
+                $('.modal-body form')[0].reset();
+            })
         })
     </script>
 </body>
