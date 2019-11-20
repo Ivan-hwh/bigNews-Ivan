@@ -52,28 +52,32 @@
         </div>
     </div>
 
+    <!-- 添加模态框 -->
+
     <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">New message</h4>
+        <h4 class="modal-title" id="exampleModalLabel">新增文章分类</h4>
       </div>
       <div class="modal-body">
+          
         <form>
+          <input type="hidden" name="" id='categoryId'>
           <div class="form-group">
-            <label for="recipient-name" class="control-label">Recipient:</label>
+            <label for="recipient-name" class="control-label">文章分类名称:</label>
             <input type="text" class="form-control" id="recipient-name">
           </div>
           <div class="form-group">
-            <label for="message-text" class="control-label">Message:</label>
+            <label for="message-text" class="control-label">文章分类别名:</label>
             <textarea class="form-control" id="message-text"></textarea>
           </div>
         </form>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Send message</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" id="btn-cancel">取消</button>
+        <button type="button" class="btn btn-primary" id="btn-confirm">确认</button>
       </div>
     </div>
   </div>
@@ -99,13 +103,87 @@
         
         $(function(){
             // 发起ajax请求
-            $.get({
+            getList();
+            function getList() {
+                $.get({
                 url:BigNew.category_list,
                 success:function(res){
                     // console.log(res);
                     var htmlStr = template('list',res);
-                    console.log(htmlStr);
+                    // console.log(htmlStr);
                     $('tbody').html(htmlStr);
+                }
+            })
+            }
+
+
+            //模态框触发事件
+            $('#myModal').on('show.bs.modal', function (e) {
+                // console.log(e.relatedTarget);
+                if(e.relatedTarget == $('#xinzengfenlei')[0]) {
+                    $('#exampleModalLabel').text('新增文章分类');
+                    $('#btn-confirm').text('新增').addClass('btn-success').removeClass('btn-primary');
+                }
+                else{
+                    $('#exampleModalLabel').text('编辑文章分类');
+                    $('#btn-confirm').text('编辑').addClass('btn-primary').removeClass('btn-success');
+
+                    // 获取当前点击的a标签Id
+                    var cateId = $(e.relatedTarget).attr('data-id');
+                    $.get({
+                        url:BigNew.category_search,
+                        data:{
+                            id:cateId
+                        },
+                        success:function(res) {
+                            if(res.code == 200) {
+                                $('#recipient-name').val(res.data[0].name);
+                                $('#message-text').val(res.data[0].slug);
+                                $('#categoryId').val(res.data[0].id);
+                            }
+                        }
+                    })
+                }
+            })
+            
+            // 点击确认按钮进行编辑/新增
+            $('#btn-confirm').click(function(){
+                if($(this).hasClass('btn-success')){
+                    // 新增按钮
+                    var name = $('#recipient-name').val();
+                    var slug = $('#message-text').val();
+                    $.post({
+                        url:BigNew.category_add,
+                        data:{
+                            name:name,
+                            slug:slug
+                        },
+                        success:function(res) {
+                            $('#myModal').modal('hide');
+                            getList();
+                        }
+                    })
+                }
+                else{
+                    // alert('编辑')
+                    // 编辑按钮
+                    var id = $('#categoryId').val();
+                    var name = $('#recipient-name').val();
+                    var slug = $('#message-text').val();
+                    // debugger;
+
+                    $.post({
+                        url:BigNew.category_edit,
+                        data:{
+                            id:id,
+                            name:name,
+                            slug:slug
+                        },
+                        success:function(res) {
+                            $('#myModal').modal('hide');
+                            window.location.reload();
+                        }
+                    })
                 }
             })
 
