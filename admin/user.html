@@ -135,10 +135,52 @@
         $("#exampleInputFile").on("change", function() {
           var imgIcon = this.files[0];
           console.log(imgIcon);
+        //window上有一个URL对象，在这个对象中有一个createObjectURL,可以将图片的信息转换为url地址   
           var url = URL.createObjectURL(imgIcon);
           console.log(url);
+        //将这个地址设置给img的src属性   
           $(".user_pic").attr("src", url);
         });
+
+        $('.btn-edit').click(function(e){
+            // 阻止默认行为
+            e.preventDefault();
+            // 获取表单信息
+            // 获取form表单 FormData只能处理原生的DOM对象
+            var form = $('#form')[0];
+            var userData = new FormData(form);
+            $.post({
+                url:BigNew.user_edit,
+                data:userData,
+                // 不需要设置请求头
+                contentType:false,
+                // 不需要进行编码
+                processData:false,
+                success:function(res){
+                    // console.log(res);
+                    if(res.code == 200){
+                        //刷新子页面
+                        // window.location.reload();
+                        //在子页面中刷新父页面
+                        // parent.window.location.reload();
+
+
+                        // 在子页面获取到父页面元素
+                        $.ajax({
+                            type: "get",
+                            url: window.BigNew.user_info,
+                            success: function(res) {
+                                parent.$(".user_info>img").attr("src", res.data.userPic);
+                                parent.$(".user_info>span").html("欢迎&nbsp;&nbsp;" + res.data.nickname);
+                                parent.$(".user_center_link>img").attr("src", res.data.userPic);
+                            }
+                            });
+                        // 刷新子页面
+                        window.location.reload();
+                    }
+                }
+            })
+        })
       });
     </script>
   </body>
