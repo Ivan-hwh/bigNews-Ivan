@@ -56,7 +56,7 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td>王积千造统最头</td>
+                        <!-- <td>王积千造统最头</td>
                         <td>杰克</td>
                         <td>奇趣事</td>
                         <td class="text-center">2017-06-08 07:08:46</td>
@@ -64,7 +64,7 @@
                         <td class="text-center">
                             <a href="article_edit.html" class="btn btn-default btn-xs">编辑</a>
                             <a href="javascript:void(0);" class="btn btn-danger btn-xs delete">删除</a>
-                        </td>
+                        </td> -->
                     </tr>
                 </tbody>
             </table>
@@ -75,9 +75,10 @@
 
     <script src="./libs/http.js"></script>
     <script type="text/html" id="list">
+        <!-- select的值取决于option的值，和potion中的value有关系。如果option有value属性，select的值就是option中的value值，如果没有value值，那么直接获取的就是option的文本内容 -->
         <option value="">所有分类</option>
         {{each data}}
-            <option id='{{$value.id}}'>{{$value.name}}</option>
+            <option value='{{$value.id}}'>{{$value.name}}</option>
         {{/each}}
     </script>
 
@@ -128,6 +129,24 @@
                 var htmlStr = template('art-list',res);
                 $('tbody').html(htmlStr);
             }
+        })
+
+        $('#btnSearch').click(function(e){
+            e.preventDefault();
+            $.get({
+            url:BigNew.article_query,
+            data:{
+                type:$('#selCategory').val(),
+                state:$('#selStatus').val(),
+                page:myPage,
+                perpage:perpage
+            },
+            success:function(res) {
+                console.log(res);
+                var htmlStr = template('art-list',res);
+                $('tbody').html(htmlStr);
+            }
+        })
         })
     </script>
 
