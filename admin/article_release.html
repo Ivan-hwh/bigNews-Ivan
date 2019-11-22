@@ -73,7 +73,7 @@
                 </div>
                 <div class="form-group">
                     <div class="col-sm-offset-2 col-sm-10">
-                        <button type="submit" class="btn btn-success btn-edit">修改</button>
+                        <button type="submit" class="btn btn-success btn-release">发表</button>
                         <button type="submit" class="btn btn-default btn-draft">存为草稿</button>
                     </div>
                 </div>
@@ -121,6 +121,56 @@
                 format: 'YYYY-MM-DD',
                 isTime: true
             }); 
+
+            // 给发表按钮注册点击事件
+            $('.btn-release').click(function(e) {
+                e.preventDefault();
+                // FormData必须用原生对象 所以要将JQ对象转换为原生对象
+                var form = $('#form')[0];
+                // 创建FormData对象 获取表单值（注意：获取的表单元素必须带有name属性 否则获取不了该表单元素的值）
+                var fd = new FormData(form);
+                // 追加发表文章内容的数据到fd  即FormData对象中去
+                fd.append('content',editor.txt.html());
+                // 追加发表文章状态的数据到fd  即FormData对象中去
+                fd.append('state','已发布');
+                // 发送Ajax请求 传入对应的字段数据进行发表文章操作
+                $.post({
+                    url:BigNew.article_publish,
+                    data:fd,
+                    // 不需要发起请求头
+                    contentType:false,
+                    // 不需要进行编码
+                    processData:false,
+                    success:function(res) {
+                        // 成功修改后 跳转回文章列表页面
+                        if(res.code ==200 && confirm('确定发表文章吗？')){
+                            window.location.href = './article_list.html'
+                        }
+                    }
+                })
+            })
+
+            // 给草稿按钮注册点击事件
+            $('.btn-draft').click(function(e) {
+                e.preventDefault();
+                // FormData必须用原生对象 所以要将JQ对象转换为原生对象
+                var form = $('#form')[0];
+                // 创建FormData对象 获取表单值（注意：获取的表单元素必须带有name属性 否则获取不了该表单元素的值）
+                var fd = new FormData(form);
+                fd.append('content',editor.txt.html());
+                // fd.append('state','已发布');
+                $.post({
+                    url:BigNew.article_publish,
+                    data:fd,
+                    contentType:false,
+                    processData:false,
+                    success:function(res) {
+                        if(res.code ==200 && confirm('确定存为草稿吗？')){
+                            window.location.href = './article_list.html'
+                        }
+                    }
+                })
+            })            
       
         })
     </script>
